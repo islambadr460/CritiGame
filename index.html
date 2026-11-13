@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CritiGame - Gaming Encyclopedia</title>
+<style>
+:root{--bg:#18181b;--gray:#27272a;--brd:#3f3f46;--pur:#8b5cf6;--hov:#7c3aed;--wht:#fff;--mut:#a1a1aa}
+*{box-sizing:border-box;margin:0;padding:0;font-family:'Segoe UI',sans-serif}
+body{background:var(--bg);color:var(--wht);line-height:1.5}
+button{cursor:pointer;border-radius:8px;font-weight:bold;transition:.2s;border:none}
+#auth{position:fixed;inset:0;background:var(--bg);display:flex;justify-content:center;align-items:center;z-index:999;padding:20px}
+.abox{background:var(--gray);padding:35px;border-radius:14px;width:100%;max-width:390px;border:2px solid var(--pur);text-align:center}
+.abox h1 span,.logo span,.box h2{color:var(--pur)}
+.abox p{color:var(--mut);font-size:14px;margin:10px 0 20px}
+.abox input{width:100%;padding:12px;margin-bottom:14px;border-radius:8px;border:1px solid var(--brd);background:var(--bg);color:var(--wht);outline:none}
+.btn-p{background:var(--pur);color:var(--wht);padding:11px 16px;width:100%;font-size:15px}
+.btn-p:hover{background:var(--hov)}
+#app{display:none}
+header{background:var(--gray);padding:12px 20px;display:flex;justify-content:space-between;align-items:center;border-bottom:3px solid var(--pur);position:sticky;top:0;z-index:100;gap:12px}
+.h-left{display:flex;align-items:center;gap:12px}
+.menu-btn{background:var(--bg);color:var(--wht);border:1px solid var(--brd);padding:8px 12px;font-size:16px}
+.logo{font-size:24px;font-weight:bold;cursor:pointer}
+.search-wrap{flex:1;max-width:450px}
+.search-wrap input{width:100%;padding:10px 15px;border-radius:8px;border:1px solid var(--brd);background:var(--bg);color:var(--wht);outline:none}
+.search-wrap input:focus{border-color:var(--pur)}
+.profile-area{position:relative}
+.avatar{width:40px;height:40px;border-radius:50%;background:var(--pur);color:var(--wht);display:flex;justify-content:center;align-items:center;font-weight:bold;font-size:18px;cursor:pointer;border:2px solid var(--wht)}
+.p-drop{display:none;position:absolute;right:0;top:48px;background:var(--gray);border:1px solid var(--pur);border-radius:10px;padding:12px;min-width:170px;box-shadow:0 10px 25px rgba(0,0,0,.5)}
+.p-drop.show{display:block}
+.p-drop p{font-size:14px;margin-bottom:10px;border-bottom:1px solid var(--brd);padding-bottom:6px;color:var(--mut)}
+.p-drop strong{color:var(--wht)}
+.lout{background:var(--bg);color:var(--wht);width:100%;padding:8px;border:1px solid var(--brd)}
+.layout{display:flex;min-height:calc(100vh - 68px)}
+aside{width:240px;background:var(--gray);border-right:1px solid var(--brd);padding:18px;flex-shrink:0;transition:.3s}
+aside.closed{display:none}
+.side-sec{margin-bottom:22px}
+.side-title{font-size:13px;text-transform:uppercase;color:var(--mut);letter-spacing:1px;margin-bottom:10px;display:flex;align-items:center;gap:6px}
+.cat-btn{display:block;width:100%;text-align:left;background:transparent;color:var(--wht);padding:9px 12px;margin-bottom:5px;font-size:14px}
+.cat-btn:hover,.cat-btn.active{background:var(--pur)}
+.lib-btn{display:flex;justify-content:space-between;align-items:center;width:100%;background:var(--bg);color:var(--wht);border:1px solid var(--pur);padding:11px 14px;font-size:14px}
+.lib-btn.active{background:var(--pur)}
+main{flex:1;padding:22px;max-width:1200px;margin:0 auto;width:100%}
+.sec-head{margin-bottom:18px;border-left:4px solid var(--pur);padding-left:10px;font-size:22px}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:20px}
+.card{background:var(--gray);border-radius:12px;overflow:hidden;border:1px solid var(--brd);position:relative;display:flex;flex-direction:column}
+.card:hover{border-color:var(--pur);transform:translateY(-4px)}
+.ptag{position:absolute;top:10px;right:10px;background:rgba(24,24,27,.92);border:1px solid var(--pur);padding:3px 9px;border-radius:6px;font-size:13px;font-weight:bold}
+.card img{width:100%;height:160px;object-fit:cover}
+.cbody{padding:15px;flex:1;display:flex;flex-direction:column;justify-content:space-between}
+.chead{display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;gap:8px}
+.rate{background:var(--pur);padding:2px 8px;border-radius:6px;font-size:12px;font-weight:bold;white-space:nowrap}
+.plat{color:var(--mut);font-size:12px;margin-bottom:14px}
+.acts{display:flex;gap:8px}
+.sbtn{background:var(--bg);color:var(--wht);border:1px solid var(--brd);padding:9px 12px}
+.sbtn.saved{background:var(--wht);color:var(--bg);border-color:var(--wht)}
+#detail{display:none;max-width:950px;margin:0 auto}
+.back{background:var(--gray);color:var(--wht);border:1px solid var(--pur);padding:8px 15px;margin-bottom:15px}
+.banner{width:100%;height:320px;object-fit:cover;border-radius:12px;border:2px solid var(--pur)}
+.trow{display:flex;justify-content:space-between;align-items:center;margin:16px 0;flex-wrap:wrap;gap:10px}
+.badges{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.pbadge{background:var(--gray);border:1px solid var(--pur);padding:6px 12px;border-radius:8px;font-weight:bold}
+.box{background:var(--gray);padding:18px;border-radius:12px;margin-bottom:16px;border:1px solid var(--brd)}
+.box h2{margin-bottom:10px;font-size:18px;border-bottom:1px solid var(--brd);padding-bottom:6px}
+.sgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:15px}
+ul{list-style:none}
+li{padding:6px 0;border-bottom:1px solid var(--brd);color:var(--mut);font-size:14px}
+li strong{color:var(--wht)}
+.gal{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px;margin-top:10px}
+.gal img{width:100%;height:140px;object-fit:cover;border-radius:8px}
+@media(max-width:768px){aside{position:fixed;left:0;top:67px;bottom:0;z-index:90}aside.closed{display:none}}
+</style>
+</head>
+<body>
+<div id="auth">
+<div class="abox">
+<h1>Criti<span>Game</span></h1>
+<p>Sign in to access game specs, prices, requirements, and your personal library.</p>
+<form onsubmit="login(event)">
+<input type="text" id="uIn" placeholder="Enter Username" required>
+<input type="password" id="pIn" placeholder="Enter Password" required>
+<button type="submit" class="btn-p">Sign In</button>
+</form>
+</div>
+</div>
+<div id="app">
+<header>
+<div class="h-left">
+<button class="menu-btn" onclick="toggleSide()" title="Categories & Library">☰</button>
+<div class="logo" onclick="setCat('All')">Criti<span>Game</span></div>
+</div>
+<div class="search-wrap"><input type="text" id="qIn" placeholder="Search game by name..." onkeyup="render()"></div>
+<div class="profile-area">
+<div class="avatar" id="avBtn" onclick="toggleProf()">U</div>
+<div class="p-drop" id="pDrop">
+<p>User: <strong id="uDisp"></strong></p>
+<button class="lout" onclick="logout()">Logout</button>
+</div>
+</div>
+</header>
+<div class="layout">
+<aside id="sidebar">
+<div class="side-sec">
+<div class="side-title">⊞ Categories</div>
+<button class="cat-btn active" onclick="setCat('All',this)">All Games</button>
+<button class="cat-btn" onclick="setCat('Action',this)">Action</button>
+<button class="cat-btn" onclick="setCat('Adventure',this)">Adventure</button>
+<button class="cat-btn" onclick="setCat('RPG',this)">RPG</button>
+<button class="cat-btn" onclick="setCat('Shooter',this)">Shooter</button>
+</div>
+<div class="side-sec">
+<div class="side-title">★ Personal</div>
+<button class="lib-btn" id="libBtn" onclick="setCat('Library',this)"><span>My Library</span><span id="cnt">0</span></button>
+</div>
+</aside>
+<main>
+<div id="homeV">
+<h2 class="sec-head" id="sTitle">All Games</h2>
+<div class="grid" id="grid"></div>
+</div>
+<div id="detail">
+<button class="back" onclick="closeG()">← Back</button>
+<div id="dCont"></div>
+</div>
+</main>
+</div>
+</div>
+<script>
+const db={
+cyberpunk:{id:"cyberpunk",t:"Cyberpunk 2077",cat:"RPG",p:"$59.99",r:"8.8/10",pl:"PC • PS5 • Xbox Series X/S",g:"Action, RPG, Open World",y:"2020",d:"Open-world action RPG set in the dark future of Night City.",img:"https://unsplash.com",shots:["https://unsplash.com","https://unsplash.com"],min:{os:"Windows 10",cpu:"i7-6700 / Ryzen 5 1600",ram:"12 GB",gpu:"GTX 1060 6GB",st:"70 GB SSD"},rec:{os:"Windows 11",cpu:"i7-12700 / Ryzen 7 7800X3D",ram:"16 GB",gpu:"RTX 2060 Super",st:"70 GB NVMe"}},
+rdr2:{id:"rdr2",t:"Red Dead Redemption 2",cat:"Adventure",p:"$59.99",r:"9.7/10",pl:"PC • PS4 • Xbox One",g:"Action-Adventure, Western",y:"2018",d:"Epic tale of honor and loyalty across America's rugged heartland in 1899.",img:"https://unsplash.com",shots:["https://unsplash.com","https://unsplash.com"],min:{os:"Windows 10",cpu:"i5-2500K / FX-6300",ram:"8 GB",gpu:"GTX 770 2GB",st:"150 GB"},rec:{os:"Windows 11",cpu:"i7-4770K / Ryzen 5 1500X",ram:"12 GB",gpu:"GTX 1060 6GB",st:"150 GB SSD"}},
+elden:{id:"elden",t:"Elden Ring",cat:"RPG",p:"$59.99",r:"9.6/10",pl:"PC • PS5 • PS4 • Xbox",g:"Action RPG, Dark Fantasy",y:"2022",d:"Rise, Tarnished, and brandish the power of the Elden Ring in the Lands Between.",img:"https://unsplash.com",shots:["https://unsplash.com","https://unsplash.com"],min:{os:"Windows 10",cpu:"i5-8400 / Ryzen 3 3300X",ram:"12 GB",gpu:"GTX 1060 3GB",st:"60 GB"},rec:{os:"Windows 11",cpu:"i7-8700K / Ryzen 5 3600X",ram:"16 GB",gpu:"GTX 1070 8GB",st:"60 GB SSD"}},
+gtav:{id:"gtav",t:"Grand Theft Auto V",cat:"Action",p:"$29.99",r:"9.4/10",pl:"PC • PS5 • PS4 • Xbox",g:"Action, Open World",y:"2013",d:"Pull off a series of dangerous heists in the sprawling city of Los Santos.",img:"unsplash.com",shots:["unsplash.com","unsplash.com"],min:{os:"Windows 10",cpu:"Core 2 Quad Q6600",ram:"4 GB",gpu:"9800 GT 1GB",st:"110 GB"},rec:{os:"Windows 11",cpu:"i5-3470 / FX-8350",ram:"8 GB",gpu:"GTX 660 2GB",st:"110 GB SSD"}},
+valorant:{id:"valorant",t:"Valorant",cat:"Shooter",p:"Free to Play",r:"8.5/10",pl:"PC • PS5 • Xbox Series X/S",g:"Tactical Shooter, FPS",y:"2020",d:"5v5 character-based tactical shooter where precise gunplay meets unique abilities.",img:"unsplash.com",shots:["unsplash.com","unsplash.com"],min:{os:"Windows 10",cpu:"Core 2 Duo E8400",ram:"4 GB",gpu:"Intel HD 4000",st:"30 GB"},rec:{os:"Windows 11",cpu:"i3-4150 / Ryzen 3 1200",ram:"8 GB",gpu:"GeForce GT 730",st:"30 GB SSD"}}
+};
+  let curCat='All',actId=null;
+function auth(){const u=localStorage.getItem("cg_u");document.getElementById("auth").style.display=u?"none":"flex";document.getElementById("app").style.display=u?"block":"none";if(u){document.getElementById("uDisp").innerText=u;document.getElementById("avBtn").innerText=u[0].toUpperCase();render();}}
+function login(e){e.preventDefault();localStorage.setItem("cg_u",document.getElementById("uIn").value.trim());auth();}
+function logout(){localStorage.removeItem("cg_u");document.getElementById("pDrop").classList.remove("show");auth();}
+function toggleSide(){document.getElementById("sidebar").classList.toggle("closed");}
+function toggleProf(){document.getElementById("pDrop").classList.toggle("show");}
+function getS(){return JSON.parse(localStorage.getItem("cg_s")||"[]");} 
+  function save(id){let s=getS();s=s.includes(id)?s.filter(x=>x!==id):[...s,id];localStorage.setItem("cg_s",JSON.stringify(s));render();if(actId===id)openG(id);}
+function setCat(c,el){
+closeG();curCat=c;
+document.querySelectorAll(".cat-btn,.lib-btn").forEach(b=>b.classList.remove("active"));
+if(el)el.classList.add("active");
+document.getElementById("sTitle").innerText=c==='Library'?"My Saved Library":(c==='All'?"All Games":c+" Games");
+if(window.innerWidth<=768)document.getElementById("sidebar").classList.add("closed");
+render();
+}
+function closeG(){actId=null;document.getElementById("detail").style.display="none";document.getElementById("homeV").style.display="block";}
+function openG(id){
+actId=id;const g=db[id],s=getS().includes(id)
+document.getElementById("homeV").style.display="none";document.getElementById("detail;").style.display="block";window.scrollTo(0,0);o
+document.getElementById("dCont").innerHTML=<img src="${g.img}" class="banner"><div class="trow"><h1>${g.t}</h1><div class="badges"><span class="pbadge">Price: ${g.p}</span><span class="rate">★ ${g.r}</span><button class="sbtn ${s?'saved':''}" onclick="save('${g.id}')">${s?'✓ Saved':'+ Save to Library'}</button></div></div><div class="box"><h2>Overview & Specifications</h2><p>${g.d}</p><ul><li><strong>Price:</strong> ${g.p}</li><li><strong>Category:</strong> ${g.cat} (${g.g})</li><li><strong>Platforms:</strong> ${g.pl}</li><li><strong>Release Year:</strong> ${g.y}</li></ul></div><div class="box"><h2>In-Game Screenshots</h2><div class="gal">${g.shots.map(i=>).join("")}</div></div><div class="sgrid"><div class="box"><h2>Minimum System Requirements</h2><ul><li><strong>OS:</strong> ${g.min.os}</li><li>
+  <strong>CPU:</strong> ${g.min.cpu}</li><li><strong>RAM:</strong> ${g.min.ram}</li><li><strong>GPU:</strong> ${g.min.gpu}</li><li><strong>Storage:</strong> ${g.min.st}</li></ul></div><div class="box"><h2>Recommended System Requirements</h2><ul><li><strong>OS:</strong> ${g.rec.os}</li><li><strong>CPU:</strong> ${g.rec.cpu}</li><li><strong>RAM:</strong> ${g.rec.ram}</li><li><strong>GPU:</strong> ${g.rec.gpu}</li><li><strong>Storage:</strong> ${g.rec.st}</li></ul></div></div>;
+}
+function render(){
+const q=document.getElementById("qIn").value.toLowerCase(),s=getS();document.getElementById("cnt").innerText=s.length;
+let list=Object.values(db).filter(g=>g.t.toLowerCase().includes(q));
+if(curCat==='Library')list=list.filter(g=>s.includes(g.id));
+else if(curCat!=='All')list=list.filter(g=>g.cat===curCat);
+  
+document.getElementById("grid").innerHTML=list.length?list.map(g=>{const isS=s.includes(g.id);return <div class="card"><div class="ptag">${g.p}</div><img src="${g.img}"><div class="cbody"><div><div class="chead"><strong>${g.t}</strong><span class="rate">★ ${g.r}</span></div><div class="plat">${g.cat} • ${g.pl}</div></div><div class="acts"><button class="btn-p" onclick="openG('${g.id}')">View Specs</button><button class="sbtn ${isS?'saved':''}" onclick="save('${g.id}')">${isS?'✓':'+'}</button></div></div></div>;}).join(""):<p style="color:var(--mut)">No games found.</p>;
+}
+auth();
